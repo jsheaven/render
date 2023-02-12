@@ -6,8 +6,11 @@
     "access": "public"
   },
   "license": "MIT",
-  "description": "",
-  "keywords": [],
+  "description": "Nano library to render JSX isomorphic",
+  "keywords": [
+    "jsx",
+    "render"
+  ],
   "repository": {
     "url": "git+https://github.com/jsheaven/render.git",
     "type": "git"
