@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es2020",
+    "declaration": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "emitDeclarationOnly": true,
+    "allowJs": true,
+    "jsx": "react",
+    "jsxFactory": "tsx",
+    "lib": [
+      "es2021",
+      "dom"
+    ]
+  },
+  "exclude": ["node_modules"],
+  "include": [
+    "src", "test"
+  ]
+}
