@@ -11,7 +11,7 @@ await buildForNode({
 await buildForBrowser({
   entryPoint: './src/client.ts',
   outfile: './dist/client.js',
-  //debug: true,
+  debug: true,
   esBuildOptions: {
     logLevel: 'error',
   },
@@ -20,7 +20,7 @@ await buildForBrowser({
 await buildForNode({
   entryPoint: './src/server.ts',
   outfile: './dist/server.js',
-  //debug: true,
+  debug: true,
   esBuildOptions: {
     logLevel: 'error',
   },

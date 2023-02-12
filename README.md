@@ -29,10 +29,27 @@
 
 <h3 align="center">ESM</h3>
 
-On server:
+Configure the following values in your `tsconfig.json` or likewise,
+in the configuration options of your favourite bundler:
+
+```json
+{
+  ...
+  "jsx": "react",
+  "jsxFactory": "tsx",
+  "jsxFragmentFactory": "Fragment",
+  ...
+}
+```
+
+This will make sure that the JSX syntax is correctly transformed into a
+JavaScript object tree (AOT, at compile time) that can be rendered by this library
+at runtime (SSG, SSR or even, if desired, in-browser).
+
+<h4 align="center">Server-side usage:</h4>
 
 ```tsx
-import { render, renderToString, tsx } from '@jsheaven/render/server.esm.js'
+import { render, renderToString, tsx, Fragment } from '@jsheaven/render/server.esm.js'
 
 // HTMLElement
 const dom: Node = render(
@@ -46,10 +63,10 @@ const dom: Node = render(
 const html: string = renderToString(dom)
 ```
 
-On client (in-browser):
+<h4 align="center">Client-side/in-browser usage:</h4>
 
 ```tsx
-import { render, renderToString, tsx } from '@jsheaven/render/client.esm.js'
+import { render, renderToString, tsx, Fragment } from '@jsheaven/render/client.esm.js'
 
 // HTMLParagraphElement
 const dom: Node = render(<p>Some paragraph</p>)

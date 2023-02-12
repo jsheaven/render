@@ -1335,3 +1335,10 @@ declare global {
     }
   }
 }
+
+export interface Props {
+  children?: Array<IVirtualNode>
+
+  // allow for forwardRef
+  ref?: Ref
+}

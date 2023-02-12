@@ -8,11 +8,16 @@ import {
   IVirtualNodeAttributes,
 } from './types'
 
-export const RENDERER_KEY = Symbol('$renderer')
 const CLASS_ATTRIBUTE_NAME = 'class'
 const XLINK_ATTRIBUTE_NAME = 'xlink'
+const XMLNS_ATTRIBUTE_NAME = 'xmlns'
 const REF_ATTRIBUTE_NAME = 'ref'
-const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
+
+const nsMap = {
+  [XMLNS_ATTRIBUTE_NAME]: 'http://www.w3.org/2000/xmlns/',
+  svg: 'http://www.w3.org/2000/svg',
+  [XLINK_ATTRIBUTE_NAME]: 'http://www.w3.org/1999/xlink',
+}
 
 // If a JSX comment is written, it looks like: { /* this */ }
 // Therefore, it turns into: {}, which is detected here
@@ -74,7 +79,7 @@ export const tsx = (
 export const getRenderer = (document: Document) => {
   // DOM abstraction layer for manipulation
   const renderer = {
-    hasElNamespace: (domElement: Element | Document): boolean => (domElement as Element).namespaceURI === SVG_NAMESPACE,
+    hasElNamespace: (domElement: Element | Document): boolean => (domElement as Element).namespaceURI === nsMap.svg,
 
     hasSvgNamespace: (parentElement: Element | Document, type: string): boolean =>
       renderer.hasElNamespace(parentElement) && type !== 'STYLE' && type !== 'SCRIPT',
@@ -100,32 +105,19 @@ export const getRenderer = (document: Document) => {
         virtualNode.type.toUpperCase() === 'SVG' ||
         (parentDomElement && renderer.hasSvgNamespace(parentDomElement, virtualNode.type.toUpperCase()))
       ) {
-        newEl = document.createElementNS(SVG_NAMESPACE, virtualNode.type as string)
+        newEl = document.createElementNS(nsMap.svg, virtualNode.type as string)
       } else {
         newEl = document.createElement(virtualNode.type as string)
       }
 
-      // reference SpringType as a reference to every element created
-      // this allows microframework addition libs like st-query to re-use this instance
-      // with the correct domImpl the element belongs to
-      Object.defineProperty(newEl, RENDERER_KEY, {
-        configurable: false,
-        enumerable: false,
-        writable: false,
-        value: renderer,
-      })
-
-      // istanbul ignore else
       if (virtualNode.attributes) {
         renderer.setAttributes(virtualNode.attributes, newEl as IElement)
       }
 
-      // istanbul ignore else
       if (virtualNode.children) {
         renderer.createChildElements(virtualNode.children, newEl as IElement)
       }
 
-      // istanbul ignore else
       if (parentDomElement) {
         parentDomElement.appendChild(newEl)
 
@@ -140,7 +132,6 @@ export const getRenderer = (document: Document) => {
     createTextNode: (text: string, domElement?: IElement | Document): Text => {
       const node = document.createTextNode(text.toString())
 
-      // istanbul ignore else
       if (domElement) {
         domElement.appendChild(node)
       }
@@ -210,11 +201,13 @@ export const getRenderer = (document: Document) => {
         value = value.join(' ')
       }
 
-      if (renderer.hasElNamespace(domElement) && name.startsWith(XLINK_ATTRIBUTE_NAME)) {
-        // allows for <svg><use xlinkHref ...></svg>
+      const nsEndIndex = name.match(/[A-Z]/)?.index
+      if (renderer.hasElNamespace(domElement) && nsEndIndex) {
+        const ns = name.substring(0, nsEndIndex).toLowerCase()
+        const attrName = name.substring(nsEndIndex, name.length).toLowerCase()
         domElement.setAttributeNS(
-          'http://www.w3.org/1999/xlink',
-          `${XLINK_ATTRIBUTE_NAME}:${name.replace(XLINK_ATTRIBUTE_NAME, '')}`.toLowerCase(),
+          nsMap[ns],
+          ns === XLINK_ATTRIBUTE_NAME || ns == 'xmlns' ? `${ns}:${attrName}` : name,
           value,
         )
       } else if (name === 'style' && typeof value !== 'string') {
@@ -253,3 +246,5 @@ export const renderIsomorphic = (
   }
   return getRenderer(document).createElementOrElements(virtualNode, parentDomElement)
 }
+
+export const Fragment = (props: IVirtualNode) => props.children
