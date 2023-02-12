@@ -6,7 +6,9 @@
 
 1. As a developer, I want to render JSX/TSX on client and server likewise
 
-2. As a developer, I don't want support for functional components and web components likewise
+2. As a developer, I want support for functional components and web components likewise
+
+3. As a developer, I don't want to use a framework for that
 
 <h2 align="center">Features</h2>
 
