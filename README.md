@@ -13,6 +13,9 @@
 <h2 align="center">Features</h2>
 
 - ✅ Does render JSX/TSX on client and server - DOM (`render`) and HTML (`renderToString`)
+- ✅ Allows to render `Function`al components like `<Foo />`
+- ✅ Supports every JSX feature you know, including Fragments `<></>`, Refs `ref={}` and `onMount={fn}`
+- ✅ Allows to render a whole HTML document on server-side, starting with `<html>`
 - ✅ Available as a simple API
 - ✅ Just `1180 byte` nano sized (ESM, gizpped) on client
 - ✅ Just `1200 byte` nano sized (ESM, gizpped) on server
