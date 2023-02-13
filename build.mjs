@@ -3,6 +3,7 @@ import { buildForBrowser, buildForNode } from '@jsheaven/easybuild'
 await buildForNode({
   entryPoint: './src/index.ts',
   outfile: './dist/index.js',
+  debug: process.argv.indexOf('--dev') > -1,
   esBuildOptions: {
     logLevel: 'error',
   },
@@ -11,7 +12,7 @@ await buildForNode({
 await buildForBrowser({
   entryPoint: './src/client.ts',
   outfile: './dist/client.js',
-  //debug: true,
+  debug: process.argv.indexOf('--dev') > -1,
   esBuildOptions: {
     logLevel: 'error',
   },
@@ -20,7 +21,7 @@ await buildForBrowser({
 await buildForNode({
   entryPoint: './src/server.ts',
   outfile: './dist/server.js',
-  //debug: true,
+  debug: process.argv.indexOf('--dev') > -1,
   esBuildOptions: {
     logLevel: 'error',
   },
