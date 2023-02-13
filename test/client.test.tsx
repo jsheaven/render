@@ -8,6 +8,19 @@ import { Ref, Props, IVirtualNode } from '../src/types'
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 
+customElements.define(
+  'my-paragraph',
+  class extends HTMLElement {
+    constructor() {
+      super()
+
+      const template = render(<p>Foo</p>)
+
+      this.attachShadow({ mode: 'open' }).appendChild(template.cloneNode(true))
+    }
+  },
+)
+
 describe('client render', () => {
   it('can render', () => {
     const el: Element = render(
@@ -652,5 +665,18 @@ describe('getRenderer', () => {
       expect(n).toBeDefined()
       expect(n.nodeName).toEqual('#text')
     })
+  })
+})
+
+describe('customElements support', () => {
+  it('can render webcomponents', () => {
+    const rendered = render(
+      <p>
+        {/** @ts-ignore */}
+        <my-paragraph></my-paragraph>
+      </p>,
+    )
+
+    expect(rendered.childNodes[0].nodeName).toEqual('MY-PARAGRAPH')
   })
 })

@@ -2,10 +2,38 @@
  * @jest-environment node
  */
 import { jest } from '@jest/globals'
-import { render, renderToString, tsx, getDocument, Fragment, getRenderer } from '../dist/server.esm.js'
-import { Ref, Props, IVirtualNode, IElement } from '../src/types'
+import {
+  render,
+  renderToString,
+  tsx,
+  getDocument,
+  Fragment,
+  getRenderer,
+  getBrowserGlobals,
+} from '../dist/server.esm.js'
+import { Ref, Props, IVirtualNode } from '../src/types'
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
+
+const getBrowserGlobalsWithCustomElementRegistered = () => {
+  const browserGlobals = getBrowserGlobals()
+  const { HTMLElement, customElements } = browserGlobals
+
+  customElements.define(
+    'my-paragraph',
+    class extends HTMLElement {
+      constructor() {
+        super()
+
+        const template = render(<p>Foo</p>)
+
+        // @ts-ignore
+        this.attachShadow({ mode: 'open' }).appendChild(template.cloneNode(true))
+      }
+    },
+  )
+  return browserGlobals
+}
 
 describe('server render', () => {
   it('can render', () => {
@@ -688,5 +716,22 @@ describe('getRenderer', () => {
       expect(n).toBeDefined()
       expect(n.nodeName).toEqual('#text')
     })
+  })
+})
+
+describe('customElements support', () => {
+  it('can render webcomponents', () => {
+    const browserGlobals = getBrowserGlobalsWithCustomElementRegistered()
+
+    const rendered = render(
+      <p>
+        {/** @ts-ignore */}
+        <my-paragraph></my-paragraph>
+      </p>,
+      null,
+      { browserGlobals },
+    )
+
+    expect(rendered.childNodes[0].nodeName).toEqual('MY-PARAGRAPH')
   })
 })

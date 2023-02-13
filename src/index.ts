@@ -8,6 +8,8 @@ import {
   IVirtualNodeAttributes,
 } from './types'
 
+export type Globals = Window & typeof globalThis
+
 const CLASS_ATTRIBUTE_NAME = 'class'
 const XLINK_ATTRIBUTE_NAME = 'xlink'
 const XMLNS_ATTRIBUTE_NAME = 'xmlns'
@@ -239,12 +241,12 @@ export const getRenderer = (document: Document) => {
 export const renderIsomorphic = (
   virtualNode: IVirtualNode | undefined | string | Array<IVirtualNode | undefined | string>,
   parentDomElement: IElement | Document,
-  document: Document,
+  globals: Globals,
 ): Array<IElement | Text | undefined> | IElement | Text | undefined => {
   if (typeof virtualNode === 'string') {
-    return getRenderer(document).createTextNode(virtualNode, parentDomElement)
+    return getRenderer(globals.window.document).createTextNode(virtualNode, parentDomElement)
   }
-  return getRenderer(document).createElementOrElements(virtualNode, parentDomElement)
+  return getRenderer(globals.window.document).createElementOrElements(virtualNode, parentDomElement)
 }
 
 export const Fragment = (props: IVirtualNode) => props.children
