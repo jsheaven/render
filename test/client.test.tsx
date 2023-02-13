@@ -680,3 +680,29 @@ describe('customElements support', () => {
     expect(rendered.childNodes[0].nodeName).toEqual('MY-PARAGRAPH')
   })
 })
+
+describe('readme', () => {
+  it('renders what the docs say', () => {
+    // HTMLParagraphElement
+    const dom: Node = render(<p>Some paragraph</p>)
+
+    // <p xmlns="http://www.w3.org/1999/xhtml">In body</p>
+    const html: string = renderToString(dom)
+
+    expect(html).toEqual('<p xmlns="http://www.w3.org/1999/xhtml">Some paragraph</p>')
+  })
+
+  it('whole doc', () => {
+    // HTMLElement
+    const dom: Node = render(
+      <html>
+        <head></head>
+        <body></body>
+      </html>,
+    )
+
+    // <html><head></head><body></body></html>
+    const html: string = renderToString(dom)
+    expect(html).toEqual('<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body></body></html>')
+  })
+})
