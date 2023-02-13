@@ -741,7 +741,7 @@ describe('readme', () => {
     // HTMLParagraphElement
     const dom: Node = render(<p>Some paragraph</p>)
 
-    // <p xmlns="http://www.w3.org/1999/xhtml">In body</p>
+    // <p>Some paragraph</p>
     const html: string = renderToString(dom)
 
     expect(html).toEqual('<p>Some paragraph</p>')
