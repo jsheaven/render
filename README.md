@@ -52,7 +52,7 @@ at runtime (SSG, SSR or even, if desired, in-browser).
 <h4 align="center">Server-side usage:</h4>
 
 ```tsx
-import { render, renderToString, tsx, Fragment } from '@jsheaven/render/server.esm.js'
+import { render, renderToString, tsx, Fragment } from '@jsheaven/render/dist/server.esm.js'
 
 // HTMLElement
 const dom: Node = render(
@@ -69,7 +69,7 @@ const html: string = renderToString(dom)
 <h4 align="center">Client-side/in-browser usage:</h4>
 
 ```tsx
-import { render, renderToString, tsx, Fragment } from '@jsheaven/render/client.esm.js'
+import { render, renderToString, tsx, Fragment } from '@jsheaven/render/dist/client.esm.js'
 
 // HTMLParagraphElement
 const dom: Node = render(<p>Some paragraph</p>)
