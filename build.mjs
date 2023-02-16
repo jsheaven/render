@@ -1,4 +1,5 @@
 import { buildForBrowser, buildForNode } from '@jsheaven/easybuild'
+import { cp } from 'fs/promises'
 
 await buildForNode({
   entryPoint: './src/index.ts',
@@ -26,3 +27,5 @@ await buildForNode({
     logLevel: 'error',
   },
 }).then(() => console.log('bundled for server'))
+
+await cp('./src/types.d.ts', './dist/types.d.ts')

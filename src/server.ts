@@ -1,6 +1,6 @@
 import { parseHTML } from 'linkedom'
 import { Globals, renderIsomorphic } from './index'
-import { IVirtualNode, IElement } from './types'
+import { VNode, VElement } from './types'
 
 export interface RenderOptions {
   /** choose an arbitrary server-side DOM / Document implementation; this library defaults to 'linkedom'; default: undefined */
@@ -11,10 +11,10 @@ export interface RenderOptions {
 }
 
 export const render = (
-  virtualNode: IVirtualNode | undefined | string | Array<IVirtualNode | undefined | string>,
-  parentDomElement?: IElement,
+  virtualNode: VNode | undefined | string | Array<VNode | undefined | string>,
+  parentDomElement?: VElement,
   options: RenderOptions = {},
-): Array<IElement | Text | undefined> | IElement | Text | undefined => {
+): Array<VElement | Text | undefined> | VElement | Text | undefined => {
   const browserGlobals = options.browserGlobals ? options.browserGlobals : getBrowserGlobals()
   const document = getDocument(options.createRoot, browserGlobals)
 
@@ -27,7 +27,7 @@ export const render = (
   return renderIsomorphic(virtualNode, parentDomElement, browserGlobals)
 }
 
-export const createRoot = (document: Document): IElement => {
+export const createRoot = (document: Document): VElement => {
   const htmlElement = document.createElement('html')
   document.appendChild(htmlElement)
   return document.documentElement

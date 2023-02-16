@@ -11,7 +11,7 @@ import {
   getRenderer,
   getBrowserGlobals,
 } from '../dist/server.esm.js'
-import { Ref, Props, IVirtualNode } from '../src/types'
+import { Ref, Props, VNode } from '../src/types'
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 
@@ -646,7 +646,7 @@ describe('getRenderer', () => {
   })
 
   describe('createElement', () => {
-    let virtualNode: IVirtualNode
+    let virtualNode: VNode
     let parentDomElement: Element
     let document: Document
 

@@ -130,7 +130,7 @@ export interface KeyFrameProperties {
   '100%'?: Partial<CSSProperties>
 }
 
-type UpdateFn = (state?: any) => void
+export type UpdateFn = (state?: any) => void
 
 export interface Ref {
   current?: any
@@ -138,37 +138,37 @@ export interface Ref {
   onUpdate?: (updateFn: UpdateFn) => void
 }
 
-export type TRef = (el: Element) => void
+export type VRef = (el: Element) => void
 
-export interface IAttributes {
+export interface VAttributes {
   // typing; detect ref
-  ref?: Ref | TRef
+  ref?: Ref | VRef
 
   // array-local unique key to identify element items in a NodeList
   key?: string
 }
 
-export interface IVirtualNodeAttributes extends IAttributes {
+export interface VNodeAttributes extends VAttributes {
   [attributeName: string]: any
 }
 
-export interface IVirtualNode<A = IVirtualNodeAttributes> {
-  type: IVirtualNodeType
+export interface VNode<A = VNodeAttributes> {
+  type: VNodeType
   attributes: A
-  children: IVirtualChildren
+  children: VNodeChildren
 }
 
 // string as in "div" creates an HTMLElement in the renderer
 // function as in functional component is called to return a VDOM object
-export type IVirtualNodeType = string | any
-export type IVirtualKey = string | number | any
-export type IVirtualRefObject<T> = { current?: T | null }
-export type IVirtualRefCallback<T> = (instance: T | null) => void
-export type IVirtualRef<T> = IVirtualRefObject<T> | IVirtualRefCallback<T>
-export type IVirtualChild = IVirtualNode<any> | object | string | number | boolean | null | undefined
-export type IVirtualChildren = IVirtualChild[]
+export type VNodeType = string | any
+export type VNodeKey = string | number | any
+export type VNodeRefObject<T> = { current?: T | null }
+export type VNodeRefCallback<T> = (instance: T | null) => void
+export type VNodeRef<T> = VNodeRefObject<T> | VNodeRefCallback<T>
+export type VNodeChild = VNode<any> | object | string | number | boolean | null | undefined
+export type VNodeChildren = VNodeChild[]
 
-export interface IElement extends HTMLElement, IAttributes {
+export interface VElement extends HTMLElement, VAttributes {
   children: HTMLCollection | any
 }
 
@@ -178,15 +178,15 @@ export interface IDOM {
   hasSvgNamespace(parentElement: Element, type: string): boolean
 
   createElementOrElements(
-    virtualNode: IVirtualNode | undefined | Array<IVirtualNode | undefined | string>,
+    virtualNode: VNode | undefined | Array<VNode | undefined | string>,
     parentDomElement?: Element,
-  ): Array<IElement | Text | undefined> | IElement | Text | undefined
+  ): Array<VElement | Text | undefined> | VElement | Text | undefined
 
-  createElement(virtualNode: IVirtualNode | undefined, parentDomElement?: Element): IElement | undefined
+  createElement(virtualNode: VNode | undefined, parentDomElement?: Element): VElement | undefined
 
   createTextNode(text: string, parentDomElement?: Element): Text
 
-  createChildElements(virtualChildren: IVirtualChildren, parentDomElement?: Element): Array<IElement | Text | undefined>
+  createChildElements(virtualChildren: VNodeChildren, parentDomElement?: Element): Array<VElement | Text | undefined>
 
   setAttribute(name: string, value: any, parentDomElement: Element, forceNative?: boolean): void
 
@@ -669,9 +669,9 @@ declare global {
       ontransitionendcapture?: TransitionEventHandler
     }
 
-    export interface DOMAttributes extends IAttributes, DOMAttributeEventHandlersLowerCase {
+    export interface DOMAttributes extends VAttributes, DOMAttributeEventHandlersLowerCase {
       // SpringType custom attributes
-      ref?: Ref | TRef | undefined
+      ref?: Ref | VRef | undefined
 
       // SpringType custom events
       onMount?: Function
@@ -1012,7 +1012,7 @@ declare global {
     }
 
     export interface HTMLAttributes extends HTMLAttributesLowerCase, DOMAttributes {
-      ref?: Ref | TRef | undefined
+      ref?: Ref | VRef | undefined
 
       // Standard HTML Attributes
       accept?: string
@@ -1337,7 +1337,7 @@ declare global {
 }
 
 export interface Props {
-  children?: Array<IVirtualNode>
+  children?: Array<VNode>
 
   // allow for forwardRef
   ref?: Ref

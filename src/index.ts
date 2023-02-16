@@ -1,12 +1,4 @@
-import {
-  IVirtualChild,
-  IVirtualChildren,
-  IVirtualNode,
-  IVirtualNodeType,
-  Ref,
-  IElement,
-  IVirtualNodeAttributes,
-} from './types'
+import { VNodeChild, VNodeChildren, VNode, VNodeType, Ref, VElement, VNodeAttributes } from './types'
 
 export type Globals = Window & typeof globalThis
 
@@ -23,13 +15,13 @@ const nsMap = {
 
 // If a JSX comment is written, it looks like: { /* this */ }
 // Therefore, it turns into: {}, which is detected here
-const isJSXComment = (node: IVirtualNode): boolean =>
+const isJSXComment = (node: VNode): boolean =>
   // istanbul ignore next
   node && typeof node === 'object' && !node.attributes && !node.type && !node.children
 
 // Filters comments and undefines like: ['a', 'b', false, {}] to: ['a', 'b', false]
-const filterComments = (children: Array<IVirtualNode> | Array<IVirtualChild>) =>
-  children.filter((child: IVirtualChild) => !isJSXComment(child as IVirtualNode))
+const filterComments = (children: Array<VNode> | Array<VNodeChild>) =>
+  children.filter((child: VNodeChild) => !isJSXComment(child as VNode))
 
 const onUpdateFn = function (this: Ref, callback: Function) {
   this.update = callback as any
@@ -37,14 +29,14 @@ const onUpdateFn = function (this: Ref, callback: Function) {
 
 export const tsx = (
   // if it is a function, it is a component
-  type: IVirtualNodeType | Function | any,
+  type: VNodeType | Function | any,
   attributes: (JSX.HTMLAttributes & JSX.SVGAttributes & Record<string, any>) | null,
-  ...children: Array<IVirtualChildren> | IVirtualChildren
-): Array<IVirtualNode> | IVirtualNode => {
+  ...children: Array<VNodeChildren> | VNodeChildren
+): Array<VNode> | VNode => {
   children = filterComments(
     // Implementation to flatten virtual node children structures like:
     // [<p>1</p>, [<p>2</p>,<p>3</p>]] to: [<p>1</p>,<p>2</p>,<p>3</p>]
-    ([] as Array<IVirtualChildren>).concat.apply([], children as any) as Array<IVirtualChildren>,
+    ([] as Array<VNodeChildren>).concat.apply([], children as any) as Array<VNodeChildren>,
   )
 
   // clone attributes as well
@@ -52,7 +44,7 @@ export const tsx = (
 
   // effectively unwrap by directly returning the children
   if (type === 'fragment') {
-    return filterComments(children) as Array<IVirtualNode>
+    return filterComments(children) as Array<VNode>
   }
 
   // it's a component, divide and conquer children
@@ -87,20 +79,20 @@ export const getRenderer = (document: Document) => {
       renderer.hasElNamespace(parentElement) && type !== 'STYLE' && type !== 'SCRIPT',
 
     createElementOrElements: (
-      virtualNode: IVirtualNode | undefined | Array<IVirtualNode | undefined | string>,
-      parentDomElement?: IElement | Document,
-    ): Array<IElement | Text | undefined> | IElement | Text | undefined => {
+      virtualNode: VNode | undefined | Array<VNode | undefined | string>,
+      parentDomElement?: VElement | Document,
+    ): Array<VElement | Text | undefined> | VElement | Text | undefined => {
       if (Array.isArray(virtualNode)) {
         return renderer.createChildElements(virtualNode, parentDomElement)
       }
       if (typeof virtualNode !== 'undefined') {
-        return renderer.createElement(virtualNode as IVirtualNode | undefined, parentDomElement)
+        return renderer.createElement(virtualNode as VNode | undefined, parentDomElement)
       }
       // undefined virtualNode -> e.g. when a tsx variable is used in markup which is undefined
       return renderer.createTextNode('', parentDomElement)
     },
 
-    createElement: (virtualNode: IVirtualNode, parentDomElement?: IElement | Document): IElement | undefined => {
+    createElement: (virtualNode: VNode, parentDomElement?: VElement | Document): VElement | undefined => {
       let newEl: Element
 
       if (
@@ -113,11 +105,11 @@ export const getRenderer = (document: Document) => {
       }
 
       if (virtualNode.attributes) {
-        renderer.setAttributes(virtualNode.attributes, newEl as IElement)
+        renderer.setAttributes(virtualNode.attributes, newEl as VElement)
       }
 
       if (virtualNode.children) {
-        renderer.createChildElements(virtualNode.children, newEl as IElement)
+        renderer.createChildElements(virtualNode.children, newEl as VElement)
       }
 
       if (parentDomElement) {
@@ -128,10 +120,10 @@ export const getRenderer = (document: Document) => {
           ;(newEl as any).$onMount!()
         }
       }
-      return newEl as IElement
+      return newEl as VElement
     },
 
-    createTextNode: (text: string, domElement?: IElement | Document): Text => {
+    createTextNode: (text: string, domElement?: VElement | Document): Text => {
       const node = document.createTextNode(text.toString())
 
       if (domElement) {
@@ -141,10 +133,10 @@ export const getRenderer = (document: Document) => {
     },
 
     createChildElements: (
-      virtualChildren: IVirtualChildren,
-      domElement?: IElement | Document,
-    ): Array<IElement | Text | undefined> => {
-      const children: Array<IElement | Text | undefined> = []
+      virtualChildren: VNodeChildren,
+      domElement?: VElement | Document,
+    ): Array<VElement | Text | undefined> => {
+      const children: Array<VElement | Text | undefined> = []
 
       for (let i = 0; i < virtualChildren.length; i++) {
         const virtualChild = virtualChildren[i]
@@ -156,13 +148,13 @@ export const getRenderer = (document: Document) => {
             ),
           )
         } else {
-          children.push(renderer.createElement(virtualChild as IVirtualNode, domElement))
+          children.push(renderer.createElement(virtualChild as VNode, domElement))
         }
       }
       return children
     },
 
-    setAttribute: (name: string, value: any, domElement: IElement) => {
+    setAttribute: (name: string, value: any, domElement: VElement) => {
       // attributes not set (undefined) are ignored; use null value to reset an attributes state
       if (typeof value === 'undefined') return
 
@@ -228,7 +220,7 @@ export const getRenderer = (document: Document) => {
       }
     },
 
-    setAttributes: (attributes: IVirtualNodeAttributes, domElement: IElement) => {
+    setAttributes: (attributes: VNodeAttributes, domElement: VElement) => {
       const attrNames = Object.keys(attributes)
       for (let i = 0; i < attrNames.length; i++) {
         renderer.setAttribute(attrNames[i], attributes[attrNames[i]], domElement)
@@ -239,14 +231,16 @@ export const getRenderer = (document: Document) => {
 }
 
 export const renderIsomorphic = (
-  virtualNode: IVirtualNode | undefined | string | Array<IVirtualNode | undefined | string>,
-  parentDomElement: IElement | Document,
+  virtualNode: VNode | undefined | string | Array<VNode | undefined | string>,
+  parentDomElement: VElement | Document,
   globals: Globals,
-): Array<IElement | Text | undefined> | IElement | Text | undefined => {
+): Array<VElement | Text | undefined> | VElement | Text | undefined => {
   if (typeof virtualNode === 'string') {
     return getRenderer(globals.window.document).createTextNode(virtualNode, parentDomElement)
   }
   return getRenderer(globals.window.document).createElementOrElements(virtualNode, parentDomElement)
 }
 
-export const Fragment = (props: IVirtualNode) => props.children
+export const Fragment = (props: VNode) => props.children
+
+export * from './types.d'

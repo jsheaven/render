@@ -1,6 +1,6 @@
 {
   "name": "@jsheaven/render",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "publishConfig": {
     "access": "public"
@@ -34,7 +34,7 @@
   },
   "module": "./dist/index.esm.js",
   "main": "./dist/index.cjs.js",
-  "types": "./dist/index.esm.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],

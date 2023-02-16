@@ -1,10 +1,10 @@
 import { renderIsomorphic } from './index'
-import { IVirtualNode, IElement } from './types'
+import { VNode, VElement } from './types'
 
 export const render = (
-  virtualNode: IVirtualNode | undefined | string | Array<IVirtualNode | undefined | string>,
-  parentDomElement: IElement | Document = document.documentElement,
-): Array<IElement | Text | undefined> | IElement | Text | undefined =>
+  virtualNode: VNode | undefined | string | Array<VNode | undefined | string>,
+  parentDomElement: VElement | Document = document.documentElement,
+): Array<VElement | Text | undefined> | VElement | Text | undefined =>
   renderIsomorphic(virtualNode, parentDomElement, window)
 
 export const renderToString = (el: Node) => new XMLSerializer().serializeToString(el)
