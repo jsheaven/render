@@ -1,4 +1,6 @@
-import * as CSS from 'csstype'
+import type * as CSS from 'csstype'
+
+export type * as CSS from 'csstype'
 
 export interface CSSProperties extends CSS.Properties<string | number> {
   /**
@@ -155,7 +157,7 @@ export interface VNodeAttributes extends VAttributes {
 export interface VNode<A = VNodeAttributes> {
   type: VNodeType
   attributes: A
-  children: VNodeChildren
+  children?: VNodeChildren
 }
 
 // string as in "div" creates an HTMLElement in the renderer
@@ -168,25 +170,21 @@ export type VNodeRef<T> = VNodeRefObject<T> | VNodeRefCallback<T>
 export type VNodeChild = VNode<any> | object | string | number | boolean | null | undefined
 export type VNodeChildren = VNodeChild[]
 
-export interface VElement extends HTMLElement, VAttributes {
-  children: HTMLCollection | any
-}
-
-export interface IDOM {
+export interface DomAbstractionImpl {
   hasElNamespace(domElement: Element): boolean
 
   hasSvgNamespace(parentElement: Element, type: string): boolean
 
   createElementOrElements(
     virtualNode: VNode | undefined | Array<VNode | undefined | string>,
-    parentDomElement?: Element,
-  ): Array<VElement | Text | undefined> | VElement | Text | undefined
+    parentDomElement?: Element | Document,
+  ): Array<Element | Text | undefined> | Element | Text | undefined
 
-  createElement(virtualNode: VNode | undefined, parentDomElement?: Element): VElement | undefined
+  createElement(virtualNode: VNode | undefined, parentDomElement?: Element | Document): Element | undefined
 
-  createTextNode(text: string, parentDomElement?: Element): Text
+  createTextNode(text: string, parentDomElement?: Element | Document): Text
 
-  createChildElements(virtualChildren: VNodeChildren, parentDomElement?: Element): Array<VElement | Text | undefined>
+  createChildElements(virtualChildren: VNodeChildren, parentDomElement?: Element): Array<Element | Text | undefined>
 
   setAttribute(name: string, value: any, parentDomElement: Element, forceNative?: boolean): void
 
@@ -1342,3 +1340,11 @@ export interface Props {
   // allow for forwardRef
   ref?: Ref
 }
+
+export type RenderNodeInput = VNode | string | undefined
+export type RenderInput = RenderNodeInput | Array<RenderNodeInput>
+export type RenderResultNode = Element | Text | undefined
+
+export type RenderResult<T = RenderInput> = T extends Array<RenderNodeInput>
+  ? Array<RenderResultNode>
+  : RenderResultNode

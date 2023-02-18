@@ -5,6 +5,7 @@
     "declaration": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
+    "skipLibCheck": true,
     "outDir": "dist",
     "emitDeclarationOnly": true,
     "allowJs": true,

@@ -1,14 +1,11 @@
 import { buildForBrowser, buildForNode } from '@jsheaven/easybuild'
 import { cp } from 'fs/promises'
 
-await buildForNode({
-  entryPoint: './src/index.ts',
-  outfile: './dist/index.js',
-  debug: process.argv.indexOf('--dev') > -1,
-  esBuildOptions: {
-    logLevel: 'error',
-  },
-}).then(() => console.log('bundled core'))
+console.log('Bundling mode:', process.argv.indexOf('--dev') > -1 ? 'development' : 'production')
+
+console.time('Bundling')
+
+console.log('Bundling for client...')
 
 await buildForBrowser({
   entryPoint: './src/client.ts',
@@ -17,7 +14,9 @@ await buildForBrowser({
   esBuildOptions: {
     logLevel: 'error',
   },
-}).then(() => console.log('bundled for client'))
+})
+
+console.log('Bundling for server...')
 
 await buildForNode({
   entryPoint: './src/server.ts',
@@ -26,6 +25,10 @@ await buildForNode({
   esBuildOptions: {
     logLevel: 'error',
   },
-}).then(() => console.log('bundled for server'))
+})
 
-await cp('./src/types.d.ts', './dist/types.d.ts')
+console.log('Copying .d.ts...')
+
+await cp('./src/types.d.ts', './dist/jsx.d.ts')
+
+console.timeEnd('Bundling')

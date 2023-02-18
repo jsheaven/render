@@ -3,15 +3,19 @@
  */
 import { jest } from '@jest/globals'
 import {
+  RenderInput,
+  RenderResult,
   render,
   renderToString,
   tsx,
   getDocument,
   Fragment,
   getRenderer,
+  Props,
   getBrowserGlobals,
-} from '../dist/server.esm.js'
-import { Ref, Props, VNode } from '../src/types'
+  Ref,
+  VNode,
+} from '../dist/server.esm'
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 
@@ -37,12 +41,12 @@ const getBrowserGlobalsWithCustomElementRegistered = () => {
 
 describe('server render', () => {
   it('can render', () => {
-    const el: Element = render(
+    const el = render(
       <html>
         <head></head>
         <body></body>
       </html>,
-    )
+    ) as Element
 
     expect(render).toBeDefined()
     expect(el.nodeName).toEqual('HTML')
@@ -55,7 +59,7 @@ describe('server render', () => {
           <head></head>
           <body></body>
         </html>,
-      ),
+      ) as Node,
     )
 
     expect(html).toBeDefined()
@@ -194,20 +198,20 @@ describe('VirtualDOM', () => {
 
   it('can render to document.body', () => {
     const divRef: Ref = {}
-    expect(render(<div ref={divRef} />).nodeName).toEqual('DIV')
+    expect((render(<div ref={divRef} />) as Element).nodeName).toEqual('DIV')
     expect(divRef.current.nodeName).toEqual('DIV')
     expect(divRef.current.parentNode.childNodes[0]).toEqual(divRef.current)
   })
 
   it('can render text to document.body', () => {
     const document: Document = getDocument(true)
-    expect(render('Mesg', document.documentElement).nodeName).toEqual('#text')
+    expect((render('Mesg', document.documentElement) as Element).nodeName).toEqual('#text')
     expect(document.documentElement.textContent).toEqual('Mesg')
   })
 
   it('can render Text', () => {
     expect(render('Foo')).toBeDefined()
-    expect(render('Foo').nodeName).toEqual('#text')
+    expect((render('Foo') as Element).nodeName).toEqual('#text')
   })
 
   it('can render an Array of elements', () => {
@@ -218,21 +222,23 @@ describe('VirtualDOM', () => {
 
   it('can render SVG elements', () => {
     expect(
-      render(
-        <svg
-          className="star__svg"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlnsXlink="http://www.w3.org/1999/xlink"
-          viewBox="0 0 32 32"
-        >
-          <path className="star__svg__path" />
-          <rect fill="none" width="32" height="32" />
-          <use xlinkHref="//wiki.selfhtml.org/wiki/SVG/Elemente/Verweise" xlinkTitle="zurück zum Wiki-Artikel">
-            <text x="140" y="60">
-              zurück zum Wiki-Artikel (mit XLink:href)
-            </text>
-          </use>
-        </svg>,
+      (
+        render(
+          <svg
+            className="star__svg"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+            viewBox="0 0 32 32"
+          >
+            <path className="star__svg__path" />
+            <rect fill="none" width="32" height="32" />
+            <use xlinkHref="//wiki.selfhtml.org/wiki/SVG/Elemente/Verweise" xlinkTitle="zurück zum Wiki-Artikel">
+              <text x="140" y="60">
+                zurück zum Wiki-Artikel (mit XLink:href)
+              </text>
+            </use>
+          </svg>,
+        ) as Element
       ).nodeName,
     ).toEqual('SVG')
   })
@@ -255,7 +261,7 @@ describe('VirtualDOM', () => {
               </text>
             </use>
           </svg>,
-        ),
+        ) as Node,
       ),
     ).toEqual(
       '<svg viewBox="0 0 32 32" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" class="star__svg"><path class="star__svg__path" /><rect height="32" width="32" fill="none" /><use xlink:title="zurück zum Wiki-Artikel" xlink:href="//wiki.selfhtml.org/wiki/SVG/Elemente/Verweise"><text y="60" x="140">zurück zum Wiki-Artikel (mit XLink:href)</text></use></svg>',
@@ -275,7 +281,7 @@ describe('VirtualDOM', () => {
               </text>
             </use>
           </svg>,
-        ),
+        ) as Node,
       ),
     ).toEqual(
       '<svg viewBox="0 0 32 32" class="star__svg"><path class="star__svg__path" /><rect height="32" width="32" fill="none" /><use xlink:title="zurück zum Wiki-Artikel" xlink:href="//wiki.selfhtml.org/wiki/SVG/Elemente/Verweise"><text y="60" x="140">zurück zum Wiki-Artikel (mit XLink:href)</text></use></svg>',
@@ -283,7 +289,7 @@ describe('VirtualDOM', () => {
   })
 
   it('can render undefined values', () => {
-    expect(render(undefined).nodeName).toEqual('#text')
+    expect((render(undefined) as Text).nodeName).toEqual('#text')
   })
 
   it('can render null values', () => {
@@ -293,7 +299,7 @@ describe('VirtualDOM', () => {
   it('can render refs', () => {
     const divRef: Ref = {}
 
-    expect(render(<div ref={divRef} />).nodeName).toEqual('DIV')
+    expect((render(<div ref={divRef} />) as Element).nodeName).toEqual('DIV')
     expect(divRef.current.nodeName).toEqual('DIV')
   })
 
@@ -301,7 +307,9 @@ describe('VirtualDOM', () => {
     const buttonRef: Ref = {}
     const onClick = jest.fn(() => {})
 
-    expect(render(<button label="button" type="button" ref={buttonRef} onClick={onClick} />).nodeName).toEqual('BUTTON')
+    expect(
+      (render(<button label="button" type="button" ref={buttonRef} onClick={onClick} />) as Element).nodeName,
+    ).toEqual('BUTTON')
     expect(buttonRef.current.nodeName).toEqual('BUTTON')
 
     buttonRef.current?.click()
@@ -313,9 +321,9 @@ describe('VirtualDOM', () => {
     const buttonRef: Ref = {}
     const onClick = jest.fn(() => {})
 
-    expect(render(<button label="button" type="button" ref={buttonRef} onClickCapture={onClick} />).nodeName).toEqual(
-      'BUTTON',
-    )
+    expect(
+      (render(<button label="button" type="button" ref={buttonRef} onClickCapture={onClick} />) as Element).nodeName,
+    ).toEqual('BUTTON')
     expect(buttonRef.current.nodeName).toEqual('BUTTON')
 
     buttonRef.current?.click()
@@ -324,9 +332,7 @@ describe('VirtualDOM', () => {
   })
 
   it('can apply many classes at once', () => {
-    const el: Element = render(
-      <button label="button" type="button" class={['a', 'b']} />,
-    ) as unknown as HTMLButtonElement
+    const el = render(<button label="button" type="button" class={['a', 'b']} />) as HTMLButtonElement
 
     expect(el.nodeName).toEqual('BUTTON')
     expect(el.classList.contains('a')).toBe(true)
@@ -334,9 +340,7 @@ describe('VirtualDOM', () => {
   })
 
   it('can apply many classes at once - with React syntax', () => {
-    const el: Element = render(
-      <button label="button" type="button" className={['a', 'b']} />,
-    ) as unknown as HTMLButtonElement
+    const el: Element = render(<button label="button" type="button" className={['a', 'b']} />) as HTMLButtonElement
 
     expect(el.nodeName).toEqual('BUTTON')
     expect(el.classList.contains('a')).toBe(true)
@@ -344,9 +348,7 @@ describe('VirtualDOM', () => {
   })
 
   it('can render undefined attributes', () => {
-    const el: Element = render(
-      <button value={undefined as any} label="foo" type="button" />,
-    ) as unknown as HTMLButtonElement
+    const el: Element = render(<button value={undefined as any} label="foo" type="button" />) as HTMLButtonElement
 
     expect(el.nodeName).toEqual('BUTTON')
   })
@@ -361,7 +363,7 @@ describe('VirtualDOM', () => {
           fontSize: '10px',
         }}
       />,
-    ) as unknown as HTMLButtonElement
+    ) as HTMLButtonElement
 
     expect(el.nodeName).toEqual('BUTTON')
     expect(el.style.border).toBe('1px solid #ccc')
@@ -369,26 +371,20 @@ describe('VirtualDOM', () => {
   })
 
   it('can render boolean attributes', () => {
-    const el: HTMLButtonElement = render(
-      <button label="button" type="button" disabled={false} />,
-    ) as unknown as HTMLButtonElement
+    const el: HTMLButtonElement = render(<button label="button" type="button" disabled={false} />) as HTMLButtonElement
 
     expect(el.nodeName).toEqual('BUTTON')
     expect(el.disabled).toBe(false)
   })
 
   it('can render boolean attributes positively', () => {
-    const el: HTMLButtonElement = render(
-      <button label="button" type="button" disabled />,
-    ) as unknown as HTMLButtonElement
+    const el: HTMLButtonElement = render(<button label="button" type="button" disabled />) as HTMLButtonElement
     expect(el.nodeName).toEqual('BUTTON')
     expect(el.disabled).toBe(true)
   })
 
   it('can render boolean attributes implicitly', () => {
-    const el: HTMLButtonElement = render(
-      <button label="button" type="button" disabled />,
-    ) as unknown as HTMLButtonElement
+    const el: HTMLButtonElement = render(<button label="button" type="button" disabled />) as HTMLButtonElement
     expect(el.nodeName).toEqual('BUTTON')
     expect(el.disabled).toBe(true)
   })
@@ -435,7 +431,7 @@ describe('VirtualDOM', () => {
   })
 
   it('calls the ref callback function when a component is created', () => {
-    let someParentDivRef: Node
+    let someParentDivRef: Element
     const someDivRef: Ref = {}
 
     const onMount = jest.fn(() => {
@@ -600,7 +596,7 @@ describe('getRenderer', () => {
         { type: 'div', attributes: {}, children: [] },
         { type: 'span', attributes: {}, children: [] },
       ]
-      const result = renderer.createElementOrElements(mockVirtualNode)
+      const result = renderer.createElementOrElements(mockVirtualNode) as Array<RenderResult<RenderInput>>
       expect(Array.isArray(result)).toBe(true)
       expect(result.length).toBe(2)
     })
@@ -613,7 +609,7 @@ describe('getRenderer', () => {
 
     it('creates an array of elements when passed an array of virtual nodes', () => {
       const document = getDocument()
-      const virtualNode = [
+      const virtualNode: Array<VNode> = [
         { type: 'div', attributes: { id: 'first-div' } },
         { type: 'div', attributes: { id: 'second-div' } },
       ]
@@ -630,7 +626,7 @@ describe('getRenderer', () => {
       const virtualNode = { type: 'div', attributes: { id: 'first-div' } }
       const parentDomElement = document.createElement('div')
 
-      const result = getRenderer(document).createElementOrElements(virtualNode, parentDomElement)
+      const result = getRenderer(document).createElementOrElements(virtualNode, parentDomElement) as Element
       expect(result.tagName).toBe('DIV')
     })
 
@@ -639,7 +635,7 @@ describe('getRenderer', () => {
       const virtualNode = undefined
       const parentDomElement = document.createElement('div')
 
-      const result = getRenderer(document).createElementOrElements(virtualNode, parentDomElement)
+      const result = getRenderer(document).createElementOrElements(virtualNode, parentDomElement) as Text
       expect(result.nodeType).toBe(3)
       expect(result.nodeValue).toBe('')
     })
@@ -730,7 +726,7 @@ describe('customElements support', () => {
       </p>,
       null,
       { browserGlobals },
-    )
+    ) as Element
 
     expect(rendered.childNodes[0].nodeName).toEqual('MY-PARAGRAPH')
   })
@@ -739,7 +735,7 @@ describe('customElements support', () => {
 describe('readme', () => {
   it('renders what the docs say', () => {
     // HTMLParagraphElement
-    const dom: Node = render(<p>Some paragraph</p>)
+    const dom = render(<p>Some paragraph</p>) as Element
 
     // <p>Some paragraph</p>
     const html: string = renderToString(dom)
@@ -749,12 +745,12 @@ describe('readme', () => {
 
   it('whole doc', () => {
     // HTMLElement
-    const dom: Node = render(
+    const dom = render(
       <html>
         <head></head>
         <body></body>
       </html>,
-    )
+    ) as Element
 
     // <html><head></head><body></body></html>
     const html: string = renderToString(dom)

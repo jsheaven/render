@@ -1,4 +1,6 @@
-import { VNodeChild, VNodeChildren, VNode, VNodeType, Ref, VElement, VNodeAttributes } from './types'
+import { VNodeChild, VNodeChildren, VNode, VNodeType, Ref, VNodeAttributes, DomAbstractionImpl } from './types.d'
+
+export { Props, CSS, CSSProperties } from './types.d'
 
 export type Globals = Window & typeof globalThis
 
@@ -9,8 +11,8 @@ const REF_ATTRIBUTE_NAME = 'ref'
 
 const nsMap = {
   [XMLNS_ATTRIBUTE_NAME]: 'http://www.w3.org/2000/xmlns/',
-  svg: 'http://www.w3.org/2000/svg',
   [XLINK_ATTRIBUTE_NAME]: 'http://www.w3.org/1999/xlink',
+  svg: 'http://www.w3.org/2000/svg',
 }
 
 // If a JSX comment is written, it looks like: { /* this */ }
@@ -70,7 +72,7 @@ export const tsx = (
   }
 }
 
-export const getRenderer = (document: Document) => {
+export const getRenderer = (document: Document): DomAbstractionImpl => {
   // DOM abstraction layer for manipulation
   const renderer = {
     hasElNamespace: (domElement: Element | Document): boolean => (domElement as Element).namespaceURI === nsMap.svg,
@@ -80,8 +82,8 @@ export const getRenderer = (document: Document) => {
 
     createElementOrElements: (
       virtualNode: VNode | undefined | Array<VNode | undefined | string>,
-      parentDomElement?: VElement | Document,
-    ): Array<VElement | Text | undefined> | VElement | Text | undefined => {
+      parentDomElement?: Element | Document,
+    ): Array<Element | Text | undefined> | Element | Text | undefined => {
       if (Array.isArray(virtualNode)) {
         return renderer.createChildElements(virtualNode, parentDomElement)
       }
@@ -92,7 +94,7 @@ export const getRenderer = (document: Document) => {
       return renderer.createTextNode('', parentDomElement)
     },
 
-    createElement: (virtualNode: VNode, parentDomElement?: VElement | Document): VElement | undefined => {
+    createElement: (virtualNode: VNode, parentDomElement?: Element | Document): Element | undefined => {
       let newEl: Element
 
       if (
@@ -105,11 +107,11 @@ export const getRenderer = (document: Document) => {
       }
 
       if (virtualNode.attributes) {
-        renderer.setAttributes(virtualNode.attributes, newEl as VElement)
+        renderer.setAttributes(virtualNode.attributes, newEl as Element)
       }
 
       if (virtualNode.children) {
-        renderer.createChildElements(virtualNode.children, newEl as VElement)
+        renderer.createChildElements(virtualNode.children, newEl as Element)
       }
 
       if (parentDomElement) {
@@ -120,10 +122,10 @@ export const getRenderer = (document: Document) => {
           ;(newEl as any).$onMount!()
         }
       }
-      return newEl as VElement
+      return newEl as Element
     },
 
-    createTextNode: (text: string, domElement?: VElement | Document): Text => {
+    createTextNode: (text: string, domElement?: Element | Document): Text => {
       const node = document.createTextNode(text.toString())
 
       if (domElement) {
@@ -134,9 +136,9 @@ export const getRenderer = (document: Document) => {
 
     createChildElements: (
       virtualChildren: VNodeChildren,
-      domElement?: VElement | Document,
-    ): Array<VElement | Text | undefined> => {
-      const children: Array<VElement | Text | undefined> = []
+      domElement?: Element | Document,
+    ): Array<Element | Text | undefined> => {
+      const children: Array<Element | Text | undefined> = []
 
       for (let i = 0; i < virtualChildren.length; i++) {
         const virtualChild = virtualChildren[i]
@@ -154,7 +156,7 @@ export const getRenderer = (document: Document) => {
       return children
     },
 
-    setAttribute: (name: string, value: any, domElement: VElement) => {
+    setAttribute: (name: string, value: any, domElement: Element) => {
       // attributes not set (undefined) are ignored; use null value to reset an attributes state
       if (typeof value === 'undefined') return
 
@@ -209,7 +211,7 @@ export const getRenderer = (document: Document) => {
 
         // allows for style={{ margin: 10 }} etc.
         for (let i = 0; i < propNames.length; i++) {
-          domElement.style[propNames[i] as any] = value[propNames[i]]
+          ;(domElement as HTMLElement).style[propNames[i] as any] = value[propNames[i]]
         }
       } else if (typeof value === 'boolean') {
         // for cases like <button checked={false} />
@@ -220,7 +222,7 @@ export const getRenderer = (document: Document) => {
       }
     },
 
-    setAttributes: (attributes: VNodeAttributes, domElement: VElement) => {
+    setAttributes: (attributes: VNodeAttributes, domElement: Element) => {
       const attrNames = Object.keys(attributes)
       for (let i = 0; i < attrNames.length; i++) {
         renderer.setAttribute(attrNames[i], attributes[attrNames[i]], domElement)
@@ -232,9 +234,9 @@ export const getRenderer = (document: Document) => {
 
 export const renderIsomorphic = (
   virtualNode: VNode | undefined | string | Array<VNode | undefined | string>,
-  parentDomElement: VElement | Document,
+  parentDomElement: Element | Document,
   globals: Globals,
-): Array<VElement | Text | undefined> | VElement | Text | undefined => {
+): Array<Element | Text | undefined> | Element | Text | undefined => {
   if (typeof virtualNode === 'string') {
     return getRenderer(globals.window.document).createTextNode(virtualNode, parentDomElement)
   }
@@ -242,5 +244,3 @@ export const renderIsomorphic = (
 }
 
 export const Fragment = (props: VNode) => props.children
-
-export * from './types.d'
