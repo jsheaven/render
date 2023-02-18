@@ -3,10 +3,6 @@ import { cp } from 'fs/promises'
 
 console.log('Bundling mode:', process.argv.indexOf('--dev') > -1 ? 'development' : 'production')
 
-console.time('Bundling')
-
-console.log('Bundling for client...')
-
 await buildForBrowser({
   entryPoint: './src/client.ts',
   outfile: './dist/client.js',
@@ -15,8 +11,6 @@ await buildForBrowser({
     logLevel: 'error',
   },
 })
-
-console.log('Bundling for server...')
 
 await buildForNode({
   entryPoint: './src/server.ts',
@@ -27,8 +21,6 @@ await buildForNode({
   },
 })
 
-console.log('Copying .d.ts...')
+console.log('Copying ./src/types.d.ts to ./dist/jsx.d.ts...')
 
 await cp('./src/types.d.ts', './dist/jsx.d.ts')
-
-console.timeEnd('Bundling')

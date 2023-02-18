@@ -656,19 +656,26 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@jsheaven/easybuild@^1.2.5":
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@jsheaven/easybuild/-/easybuild-1.2.5.tgz#ce030e480c92f4b75893e9dd93b70f6c8f123480"
-  integrity sha512-xWiZmfiM8rSMj0BQGCBTGYDJs+QeSiT2cDf0GyfbyefZSjs/V2bRdqGCRptO/1AItUQEf16c0BsN6QheNfSC+g==
+"@jsheaven/easybuild@^1.2.8":
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@jsheaven/easybuild/-/easybuild-1.2.8.tgz#b673d460d64b691d8236dca4f6b0630121ae5c59"
+  integrity sha512-4QDxocuZCfcmxIZ6aUMGqHVLgWnjeuz5eo+S230dFJXXeBres8jVLgwsoBi0iF7tIY6MPtGI3ioBDKp3xAB/Eg==
   dependencies:
+    "@jsheaven/status-message" "^1.1.1"
     brotli-size "^4.0.0"
     dts-bundle-generator "^7.2.0"
     esbuild "^0.17.6"
     fast-glob "^3.2.12"
     gzip-size "^7.0.0"
-    kleur "^4.1.5"
     pretty-bytes "^6.1.0"
     typescript "^4.9.5"
+
+"@jsheaven/status-message@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@jsheaven/status-message/-/status-message-1.1.1.tgz#7dd103f9562c9049818e4007ac99e79269f3a4ee"
+  integrity sha512-2+quW/URm6pD2oh5MPdUz89aFe6p3qGdgiP9EtXdrP0TBi8o6NNIxGUwFzckkAz8Nvdv9gT32QQ+YRwuBVpWbQ==
+  dependencies:
+    kleur "^4.1.5"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
