@@ -20,7 +20,8 @@
     "test": "NODE_OPTIONS='--experimental-vm-modules --enable-source-maps --no-warnings' jest --verbose --coverage ./test/*.test.tsx",
     "clean": "rm -rf ./dist && rm -rf ./coverage",
     "prebuild": "yarn clean",
-    "build": "yarn node --enable-source-maps ./build.mjs && pkgroll"
+    "build": "yarn node --enable-source-maps ./build.mjs && pkgroll --minify",
+    "postbuild": "yarn node --enable-source-maps ./finish.mjs"
   },
   "author": "Aron Homberg <info@aron-homberg.de>",
   "sideEffects": false,
@@ -33,26 +34,6 @@
       "import": {
         "types": "./dist/index.d.mts",
         "default": "./dist/index.mjs"
-      }
-    },
-    "./server": {
-      "require": {
-        "types": "./dist/server.cjs.d.ts",
-        "default": "./dist/server.cjs.js"
-      },
-      "import": {
-        "types": "./dist/server.esm.d.ts",
-        "default": "./dist/server.esm.js"
-      }
-    },
-    "./client": {
-      "require": {
-        "types": "./dist/client.cjs.d.ts",
-        "default": "./dist/client.cjs.js"
-      },
-      "import": {
-        "types": "./dist/client.esm.d.ts",
-        "default": "./dist/client.esm.js"
       }
     }
   },

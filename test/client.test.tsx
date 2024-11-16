@@ -1,9 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-
 import { jest } from '@jest/globals'
-import { render, renderToString, tsx, Fragment, getRenderer, Ref, Props, VNode } from '../dist/client.esm'
+import { render, renderToString, tsx, Fragment, getRenderer, type Ref, type Props, type VNode } from '../dist/dist/client.esm'
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 

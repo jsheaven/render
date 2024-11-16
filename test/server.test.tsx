@@ -3,19 +3,19 @@
  */
 import { jest } from '@jest/globals'
 import {
-  RenderInput,
-  RenderResult,
+  type RenderInput,
+  type RenderResult,
   render,
   renderToString,
   tsx,
   getDocument,
   Fragment,
   getRenderer,
-  Props,
+  type Props,
   getBrowserGlobals,
-  Ref,
-  VNode,
-} from '../dist/server.esm'
+  type Ref,
+  type VNode,
+} from '../dist/dist/server.esm'
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 
