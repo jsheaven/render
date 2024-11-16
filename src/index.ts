@@ -107,6 +107,11 @@ export const getRenderer = (document: Document): DomAbstractionImpl => {
       }
 
       if (virtualNode.attributes) {
+        // dangerouslySetInnerHTML={{ __html: '<... />' }}
+        if ('dangerouslySetInnerHTML' in virtualNode.attributes) {
+          newEl.innerHTML = virtualNode.attributes.dangerouslySetInnerHTML?.__html
+          delete virtualNode.attributes.dangerouslySetInnerHTML 
+        }
         renderer.setAttributes(virtualNode.attributes, newEl as Element)
       }
 

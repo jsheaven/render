@@ -696,3 +696,27 @@ describe('readme', () => {
     expect(html).toEqual('<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body></body></html>')
   })
 })
+
+describe('dangerouslySetInnerHTML', () => {
+  it('renders elements with innerHTML and no dangerouslySetInnerHTML attribute', () => {
+    // Initial empty parent DOM element
+    const parentDOMElement: Element = render(
+      <div></div>,
+    ) as Element
+
+    const innerHtmlContent = '<span>Rendered Content</span>'
+    const FC = () => <div dangerouslySetInnerHTML={{ __html: innerHtmlContent }}></div>
+
+    const someFc = <FC />
+    render(someFc, parentDOMElement)
+
+    const renderedDiv = parentDOMElement.childNodes[0] as HTMLDivElement
+
+    // Check that the rendered node is a DIV and has the expected innerHTML content
+    expect(renderedDiv.nodeName).toEqual('DIV')
+    expect(renderedDiv.innerHTML).toEqual(innerHtmlContent)
+
+    // Verify that dangerouslySetInnerHTML is not an attribute on the final DOM element
+    expect(renderedDiv.hasAttribute('dangerouslySetInnerHTML')).toBe(false)
+  })
+});

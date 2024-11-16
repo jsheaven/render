@@ -757,3 +757,32 @@ describe('readme', () => {
     expect(html).toEqual('<html><head></head><body></body></html>')
   })
 })
+
+
+describe('dangerouslySetInnerHTML', () => {
+
+  it('renders innerHTML with dangerouslySetInnerHTML in SSR', () => {
+    const innerHtmlContent = '<span>Injected Content</span>'
+    const dom = render(<div dangerouslySetInnerHTML={{ __html: innerHtmlContent }}></div>) as Element
+
+    // <div><span>Injected Content</span></div>
+    const html: string = renderToString(dom)
+
+    expect(html).toEqual('<div><span>Injected Content</span></div>')
+  })
+
+  it('renders full document with dangerouslySetInnerHTML in SSR', () => {
+    const innerHtmlContent = '<main><h1>Title</h1><p>Welcome!</p></main>'
+    const dom = render(
+      <html>
+        <head></head>
+        <body dangerouslySetInnerHTML={{ __html: innerHtmlContent }}></body>
+      </html>,
+    ) as Element
+
+    // <html><head></head><body><main><h1>Title</h1><p>Welcome!</p></main></body></html>
+    const html: string = renderToString(dom)
+
+    expect(html).toEqual('<html><head></head><body><main><h1>Title</h1><p>Welcome!</p></main></body></html>')
+  })
+})

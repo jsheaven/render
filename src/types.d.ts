@@ -864,6 +864,11 @@ declare global {
     }
 
     export interface HTMLAttributesLowerCase {
+
+      dangerouslysetinnerhTML?: {
+        __html: string
+      }
+
       // Standard HTML Attributes
       accept?: string
       acceptcharset?: string
@@ -1011,6 +1016,10 @@ declare global {
 
     export interface HTMLAttributes extends HTMLAttributesLowerCase, DOMAttributes {
       ref?: Ref | VRef | undefined
+
+      dangerouslySetInnerHTML?: {
+        __html: string
+      }
 
       // Standard HTML Attributes
       accept?: string

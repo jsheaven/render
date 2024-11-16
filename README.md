@@ -17,6 +17,7 @@
 - ✅ Supports every JSX feature you know, including Fragments `<></>`, Refs `ref={}` and `onMount={fn}`
 - ✅ Allows to render a whole HTML document server-side, starting with `<html>`
 - ✅ Available as a simple API
+- ✅ Supports `dangerouslySetInnerHTML={{ __html: '<... />' }`
 - ✅ Just `1113 byte` nano sized (ESM, gizpped) on client
 - ✅ Just `1254 byte` nano sized (ESM, gizpped) on server
 - ✅ Tree-shakable and side-effect free
