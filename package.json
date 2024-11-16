@@ -25,13 +25,35 @@
   "author": "Aron Homberg <info@aron-homberg.de>",
   "sideEffects": false,
   "exports": {
-    "require": {
-      "types": "./dist/index.d.cts",
-      "default": "./dist/index.cjs"
+    ".": {
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
     },
-    "import": {
-      "types": "./dist/index.d.mts",
-      "default": "./dist/index.mjs"
+    "./server": {
+      "require": {
+        "types": "./dist/server.cjs.d.ts",
+        "default": "./dist/server.cjs.js"
+      },
+      "import": {
+        "types": "./dist/server.esm.d.ts",
+        "default": "./dist/server.esm.js"
+      }
+    },
+    "./client": {
+      "require": {
+        "types": "./dist/client.cjs.d.ts",
+        "default": "./dist/client.cjs.js"
+      },
+      "import": {
+        "types": "./dist/client.esm.d.ts",
+        "default": "./dist/client.esm.js"
+      }
     }
   },
   "main": "./dist/index.cjs",
