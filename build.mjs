@@ -1,5 +1,5 @@
 import { buildForBrowser, buildForNode } from '@jsheaven/easybuild'
-import { cp } from 'fs/promises'
+import { cp } from 'node:fs/promises'
 
 console.log('Bundling mode:', process.argv.indexOf('--dev') > -1 ? 'development' : 'production')
 

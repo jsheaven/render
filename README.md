@@ -23,6 +23,8 @@
 - ✅ First class TypeScript support
 - ✅ 100% Unit Test coverage
 
+<img src="./coverage_report.png"  />
+
 <h2 align="center">Example usage</h2>
 
 <h3 align="center">Setup</h3>

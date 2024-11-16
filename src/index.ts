@@ -1,6 +1,6 @@
-import { VNodeChild, VNodeChildren, VNode, VNodeType, Ref, VNodeAttributes, DomAbstractionImpl } from './types.d'
+import type { VNodeChild, VNodeChildren, VNode, VNodeType, Ref, VNodeAttributes, DomAbstractionImpl } from './types.d'
 
-export { Props, CSS, CSSProperties } from './types.d'
+export type { Props, CSS, CSSProperties } from './types.d'
 
 export type Globals = Window & typeof globalThis
 
