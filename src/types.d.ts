@@ -160,6 +160,7 @@ export interface VNode<A = VNodeAttributes> {
   children?: VNodeChildren
 }
 
+
 // string as in "div" creates an HTMLElement in the renderer
 // function as in functional component is called to return a VDOM object
 export type VNodeType = string | any
@@ -169,6 +170,9 @@ export type VNodeRefCallback<T> = (instance: T | null) => void
 export type VNodeRef<T> = VNodeRefObject<T> | VNodeRefCallback<T>
 export type VNodeChild = VNode<any> | object | string | number | boolean | null | undefined
 export type VNodeChildren = VNodeChild[]
+
+// simple types for declaring children and props
+export type Children = VNodeChildren;
 
 export interface DomAbstractionImpl {
   hasElNamespace(domElement: Element): boolean
@@ -1344,7 +1348,7 @@ declare global {
 }
 
 export interface Props {
-  children?: Array<VNode>
+  children?: VNodeChildren
 
   // allow for forwardRef
   ref?: Ref

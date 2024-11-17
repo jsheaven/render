@@ -1,5 +1,5 @@
 import { renderIsomorphic } from './index'
-import { RenderInput, RenderResult } from './types'
+import type { RenderInput, RenderResult } from './types'
 
 export const render = <T extends RenderInput>(
   virtualNode: T,
